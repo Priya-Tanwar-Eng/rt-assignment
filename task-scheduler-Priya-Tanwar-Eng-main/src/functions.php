@@ -9,6 +9,20 @@
 function addTask( string $task_name ): bool {
 	$file  = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+	$task = trim($task_name);
+    if (empty($task)) return false;
+
+    $task_id = uniqid(); // ✅ Unique ID
+    $status = '0'; // Not completed
+
+    $line = $task_id . '|' . $status . '|' . $task;
+
+    $handle = fopen($file, 'a');
+    if ($handle === false) return false;
+
+    fwrite($handle, $line . PHP_EOL);
+    fclose($handle);
+    return true;
 }
 
 /**
@@ -19,6 +33,7 @@ function addTask( string $task_name ): bool {
 function getAllTasks(): array {
 	$file = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+	
 }
 
 /**

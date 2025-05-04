@@ -4,6 +4,18 @@ require_once 'functions.php';
 // TODO: Implement the task scheduler, email form and logic for email registration.
 
 // In HTML, you can add desired wrapper `<div>` elements or other elements to style the page. Just ensure that the following elements retain their provided IDs.
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['task-name'])) {
+        $task = $_POST['task-name'];
+        if (addTask($task)) {
+            echo "<p style='color:green;'> Task added successfully!</p>";
+        } else {
+            echo "<p style='color:red;'> Failed to add task. Try again.</p>";
+        }
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html>
