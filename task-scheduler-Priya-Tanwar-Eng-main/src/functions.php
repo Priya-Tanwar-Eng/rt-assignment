@@ -76,6 +76,31 @@ function markTaskAsCompleted( string $task_id, bool $is_completed ): bool {
 function deleteTask( string $task_id ): bool {
 	$file  = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+	if (!file_exists($file)) {
+        return false;
+    }
+
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $new_lines = [];
+
+    foreach ($lines as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3 && $parts[0] !== $task_id) {
+            $new_lines[] = $line;
+        }
+    }
+
+    $handle = fopen($file, 'w');
+    if ($handle === false) {
+        return false;
+    }
+
+    foreach ($new_lines as $line) {
+        fwrite($handle, $line . PHP_EOL);
+    }
+
+    fclose($handle);
+    return true;
 }
 
 /**

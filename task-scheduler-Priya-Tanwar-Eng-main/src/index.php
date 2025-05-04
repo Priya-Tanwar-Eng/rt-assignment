@@ -16,6 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete-task-id'])) {
+    deleteTask($_POST['delete-task-id']);
+    header("Location: " . $_SERVER['PHP_SELF']); 
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html>
