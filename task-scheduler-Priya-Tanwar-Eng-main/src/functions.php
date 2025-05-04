@@ -9,7 +9,7 @@
 function addTask( string $task_name ): bool {
 	$file  = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
-	$task = trim($task_name);
+	 $task = trim($task_name);
     if (empty($task)) return false;
 
     $task_id = uniqid(); // ✅ Unique ID
@@ -33,6 +33,25 @@ function addTask( string $task_name ): bool {
 function getAllTasks(): array {
 	$file = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+	if (!file_exists($file)) {
+        return [];
+    }
+
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $tasks = [];
+
+    foreach ($lines as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3) {
+            $tasks[] = [
+                'id' => $parts[0],
+                'status' => $parts[1],
+                'name' => $parts[2]
+            ];
+        }
+    }
+
+    return $tasks;
 	
 }
 

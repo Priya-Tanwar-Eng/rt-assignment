@@ -39,10 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		provided elements you can modify there position, wrap them
 		in another container, or add styles but they must contain
 		specified classnames and input type )!-->
-		<li class="task-item">
-			<input type="checkbox" class="task-status">
-			<button class="delete-task">Delete</button>
-		</li>	
+		<?php
+$tasks = getAllTasks();
+if (!empty($tasks)) {
+    foreach ($tasks as $task) {
+        echo "<li class='task-item'>
+                <input type='checkbox' class='task-status' " . ($task['status'] === '1' ? 'checked' : '') . ">
+                <span class='task-name'>{$task['name']}</span>
+                <form method='POST' action='' style='display:inline;'>
+                    <input type='hidden' name='delete-task-id' value='{$task['id']}'>
+                    <button type='submit' class='delete-task'>Delete</button>
+                </form>
+              </li>";
+    }
+}
+?>	
 	</ul>
 
 	<!-- Subscription Form -->
