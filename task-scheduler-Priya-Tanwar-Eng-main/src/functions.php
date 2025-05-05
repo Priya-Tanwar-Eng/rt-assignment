@@ -12,7 +12,7 @@ function addTask(string $task_name): bool {
     $task = trim($task_name);
     if (empty($task)) return false;
 
-    $task_id = uniqid(); // ✅ Unique ID
+    $task_id = uniqid(); // Unique ID
     $status = '0'; // Not completed
 
     $line = $task_id . '|' . $status . '|' . $task;
