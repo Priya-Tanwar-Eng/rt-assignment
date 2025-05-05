@@ -6,9 +6,23 @@
  * @param string $task_name The name of the task to add.
  * @return bool True on success, false on failure.
  */
-function addTask( string $task_name ): bool {
-	$file  = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
+
+function addTask(string $task_name): bool {
+    $file = __DIR__ . '/tasks.txt';
+    $task = trim($task_name);
+    if (empty($task)) return false;
+
+    $task_id = uniqid(); // Unique ID
+    $status = '0'; // Not completed
+
+    $line = $task_id . '|' . $status . '|' . $task;
+
+    $handle = fopen($file, 'a');
+    if ($handle === false) return false;
+
+    fwrite($handle, $line . PHP_EOL);
+    fclose($handle);
+    return true;
 }
 
 /**
@@ -17,8 +31,27 @@ function addTask( string $task_name ): bool {
  * @return array Array of tasks.
  */
 function getAllTasks(): array {
-	$file = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
+    $file = __DIR__ . '/tasks.txt';
+
+    if (!file_exists($file)) {
+        return [];
+    }
+
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $tasks = [];
+
+    foreach ($lines as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3) {
+            $tasks[] = [
+                'id' => $parts[0],
+                'status' => $parts[1],
+                'name' => $parts[2]
+            ];
+        }
+    }
+
+    return $tasks;
 }
 
 /**
@@ -31,6 +64,40 @@ function getAllTasks(): array {
 function markTaskAsCompleted( string $task_id, bool $is_completed ): bool {
 	$file  = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+
+	if (!file_exists($file)) {
+        return false;
+    }
+    
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $updated = false;
+    
+    foreach ($lines as $index => $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3 && $parts[0] === $task_id) {
+            $parts[1] = $is_completed ? '1' : '0'; // Update status
+            $lines[$index] = implode('|', $parts);
+            $updated = true;
+            break;
+        }
+    }
+    
+    if (!$updated) {
+        return false; // Task not found
+    }
+    
+    // Write updated lines back to the file
+    $handle = fopen($file, 'w');
+    if ($handle === false) {
+        return false;
+    }
+    
+    foreach ($lines as $line) {
+        fwrite($handle, $line . PHP_EOL);
+    }
+    
+    fclose($handle);
+    return true;
 }
 
 /**
@@ -39,10 +106,36 @@ function markTaskAsCompleted( string $task_id, bool $is_completed ): bool {
  * @param string $task_id The ID of the task to delete.
  * @return bool True on success, false on failure.
  */
-function deleteTask( string $task_id ): bool {
-	$file  = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
+function deleteTask(string $task_id): bool {
+    $file = __DIR__ . '/tasks.txt';
+
+    if (!file_exists($file)) {
+        return false;
+    }
+
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $new_lines = [];
+
+    foreach ($lines as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3 && $parts[0] !== $task_id) {
+            $new_lines[] = $line;
+        }
+    }
+
+    $handle = fopen($file, 'w');
+    if ($handle === false) {
+        return false;
+    }
+
+    foreach ($new_lines as $line) {
+        fwrite($handle, $line . PHP_EOL);
+    }
+
+    fclose($handle);
+    return true;
 }
+
 
 /**
  * Generates a 6-digit verification code
