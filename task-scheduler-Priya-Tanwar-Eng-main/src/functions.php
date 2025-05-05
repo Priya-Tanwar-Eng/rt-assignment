@@ -6,10 +6,10 @@
  * @param string $task_name The name of the task to add.
  * @return bool True on success, false on failure.
  */
-function addTask( string $task_name ): bool {
-	$file  = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
-	 $task = trim($task_name);
+
+function addTask(string $task_name): bool {
+    $file = __DIR__ . '/tasks.txt';
+    $task = trim($task_name);
     if (empty($task)) return false;
 
     $task_id = uniqid(); // ✅ Unique ID
@@ -31,9 +31,9 @@ function addTask( string $task_name ): bool {
  * @return array Array of tasks.
  */
 function getAllTasks(): array {
-	$file = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
-	if (!file_exists($file)) {
+    $file = __DIR__ . '/tasks.txt';
+
+    if (!file_exists($file)) {
         return [];
     }
 
@@ -52,7 +52,6 @@ function getAllTasks(): array {
     }
 
     return $tasks;
-	
 }
 
 /**
@@ -65,6 +64,40 @@ function getAllTasks(): array {
 function markTaskAsCompleted( string $task_id, bool $is_completed ): bool {
 	$file  = __DIR__ . '/tasks.txt';
 	// TODO: Implement this function
+
+	if (!file_exists($file)) {
+        return false;
+    }
+    
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    $updated = false;
+    
+    foreach ($lines as $index => $line) {
+        $parts = explode('|', $line);
+        if (count($parts) === 3 && $parts[0] === $task_id) {
+            $parts[1] = $is_completed ? '1' : '0'; // Update status
+            $lines[$index] = implode('|', $parts);
+            $updated = true;
+            break;
+        }
+    }
+    
+    if (!$updated) {
+        return false; // Task not found
+    }
+    
+    // Write updated lines back to the file
+    $handle = fopen($file, 'w');
+    if ($handle === false) {
+        return false;
+    }
+    
+    foreach ($lines as $line) {
+        fwrite($handle, $line . PHP_EOL);
+    }
+    
+    fclose($handle);
+    return true;
 }
 
 /**
@@ -73,10 +106,10 @@ function markTaskAsCompleted( string $task_id, bool $is_completed ): bool {
  * @param string $task_id The ID of the task to delete.
  * @return bool True on success, false on failure.
  */
-function deleteTask( string $task_id ): bool {
-	$file  = __DIR__ . '/tasks.txt';
-	// TODO: Implement this function
-	if (!file_exists($file)) {
+function deleteTask(string $task_id): bool {
+    $file = __DIR__ . '/tasks.txt';
+
+    if (!file_exists($file)) {
         return false;
     }
 
@@ -102,6 +135,7 @@ function deleteTask( string $task_id ): bool {
     fclose($handle);
     return true;
 }
+
 
 /**
  * Generates a 6-digit verification code
